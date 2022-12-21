@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_map_example/pages/animated_map_controller.dart';
 import 'package:flutter_map_example/pages/circle.dart';
+import 'package:flutter_map_example/pages/custom.dart';
 import 'package:flutter_map_example/pages/custom_crs/custom_crs.dart';
 import 'package:flutter_map_example/pages/epsg3413_crs.dart';
 import 'package:flutter_map_example/pages/epsg4326_crs.dart';
@@ -269,6 +270,12 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
           context,
           const Text('Fallback URL AssetTileProvider'),
           FallbackUrlOfflinePage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
+          const Text('Custom Page'),
+          CustomPage.route,
           currentRoute,
         ),
       ],

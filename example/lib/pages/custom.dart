@@ -7,22 +7,22 @@ import 'package:flutter_map_example/widgets/drawer.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
-class LiveLocationPage extends StatefulWidget {
-  static const String route = '/live_location';
+class CustomPage extends StatefulWidget {
+  static const String route = '/custom_page';
 
-  const LiveLocationPage({Key? key}) : super(key: key);
+  const CustomPage({Key? key}) : super(key: key);
 
   @override
-  _LiveLocationPageState createState() => _LiveLocationPageState();
+  _CustomPageState createState() => _CustomPageState();
 }
 
-class _LiveLocationPageState extends State<LiveLocationPage> {
+class _CustomPageState extends State<CustomPage> {
   LocationData? _currentLocation;
   late final MapController _mapController;
 
   double doubleInRange(Random source, num start, num end) =>
       source.nextDouble() * (end - start) + start;
-  List<Marker> allMarkers = [];
+  List<Marker> allMarkers = []; // 주변 마커
 
   bool _liveUpdate = false;
   bool _permission = false;
@@ -115,6 +115,16 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
     }
   }
 
+  double getDistanceBetweenPoints(LatLng p1, LatLng p2) {
+    final theta = p1.longitude - p2.longitude;
+    var distance = sin(degToRadian(p1.latitude)) * sin(degToRadian(p2.latitude)) + cos(degToRadian(p1.latitude)) * cos(degToRadian(p2.latitude)) * cos(degToRadian(theta));
+    distance = radianToDeg(acos(distance));
+    distance = distance * 60 * 1.1515;
+
+    // to kilometers
+    return distance * 1.609344;
+  }
+
   @override
   Widget build(BuildContext context) {
     LatLng currentLatLng;
@@ -140,9 +150,20 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
       ),
     ];
 
+    final List<Marker> nearMarkers = []; // 10 km 내의 마커
+    for (int i = 0; i < allMarkers.length; i++) {
+      final marker = allMarkers[i];
+      final distance = getDistanceBetweenPoints(marker.point, currentLatLng);
+      print(distance);
+      if (distance < 400.0) {
+        print("selected $distance");
+        nearMarkers.add(allMarkers[i]);
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
-      drawer: buildDrawer(context, LiveLocationPage.route),
+      drawer: buildDrawer(context, CustomPage.route),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
@@ -171,8 +192,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
                         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                   ),
-                  MarkerLayer(markers: allMarkers.sublist(
-                      0, min(allMarkers.length, 400))),
+                  MarkerLayer(markers: nearMarkers),
                   MarkerLayer(markers: markers),
                 ],
               ),
