@@ -138,15 +138,20 @@ class _CustomPageState extends State<CustomPage> {
       currentLatLng = LatLng(0, 0);
     }
 
-    final markers = <Marker>[
+    final currentMarkers = <Marker>[
       Marker(
-        width: 80,
-        height: 80,
+        width: 50,
+        height: 50,
         point: currentLatLng,
-        builder: (ctx) => const FlutterLogo(
-          textColor: Colors.blue,
-          key: ObjectKey(Colors.blue),
+        builder: (ctx) => const Icon(
+          Icons.circle,
+          color: Colors.blue,
+          size: 12,
         ),
+        // builder: (ctx) => const FlutterLogo(
+        //   textColor: Colors.blue,
+        //   key: ObjectKey(Colors.blue),
+        // ),
       ),
     ];
 
@@ -193,7 +198,7 @@ class _CustomPageState extends State<CustomPage> {
                     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                   ),
                   MarkerLayer(markers: nearMarkers),
-                  MarkerLayer(markers: markers),
+                  MarkerLayer(markers: currentMarkers),
                 ],
               ),
             ),
